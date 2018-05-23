@@ -15,7 +15,7 @@ from stock import Stock
 from trader import Trader
 from time import sleep
 
-# Simulation run function
+# Stock market simulation run
 def run_market(stock_options= 20, traders= 40, duration= 100000):
     """ Runs the simulation and returns the market state (including trader
              portfolios, stock prices, and market index)
