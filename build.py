@@ -10,27 +10,32 @@ import random
 import threading
 import pandas as pd
 import numpy as np
-from util import represent
+from util import represent, printProgressBar
 from stock import Stock
 from trader import Trader
+from time import sleep
 
+# Simulation run function
 def run_market(stock_options= 20, traders= 40, duration= 100000):
     """ Runs the simulation and returns the market state (including trader
              portfolios, stock prices, and market index)
 
         Args:
-            stock_options   : Number of stock options in this simulation.
-            traders  : Number of traders in this simulation.
-            duration : Number of duration.
+            stock_options (int): Number of stock options in this simulation.
+            traders       (int): Number of traders in this simulation.
+            duration      (int): Number of duration.
 
         Returns:
             index    (list[int]): The market's index throughout the duration.
             traders  (list[Trader]): List of Trader objects & their updated
                                      portfolios.
             stocks   (list[Stock]): A list of Stock objects after price changes.
-            market   (pandas.DataFrame): Consolidated trader portfolios with their
-                                         total assets.
+            market   (pandas.DataFrame): Consolidated trader portfolios
+                                         with their total assets.
     """
+
+    assert type(stock_options) and type(traders) and type(duration) == int
+
     mutex = threading.Lock()
     barrier = threading.Barrier(traders)
 
@@ -42,6 +47,10 @@ def run_market(stock_options= 20, traders= 40, duration= 100000):
 
     # initialising traders
     traders = init_traders(traders, stocks)
+
+    # Initial call to print 0% progress
+    printProgressBar(0, duration, prefix = 'Progress:',
+                        suffix = 'Complete', length = 50)
 
     # run the simulation
     for time in range(duration):
@@ -60,6 +69,12 @@ def run_market(stock_options= 20, traders= 40, duration= 100000):
 
         # calculate the market index after each hour
         calculate_index(stocks, index)
+
+        # Update Progress Bar
+        sleep(0.1)
+        printProgressBar(time + 1, duration, prefix = 'Progress:',
+                         suffix = 'Complete', length = 50)
+
 
     # visualise the market index, traders and stocks
     market = represent(traders, stocks, index, duration)

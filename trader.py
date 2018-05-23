@@ -5,6 +5,8 @@
     Date last modified: 18/MAY/2018
     Python Version: 3.0
 '''
+
+
 import random
 from stock import Stock
 
@@ -49,7 +51,7 @@ class Trader:
             self.portfolio[stock.id][0] -= 1
             stock.sell()
 
-    # no longer in use
+    # this function no longer in use
     def liquidity(self):
         if random.random() < 0.1:
             self.wallet += random.gauss(500, 20)

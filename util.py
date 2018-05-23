@@ -10,9 +10,24 @@ import random
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt, mpld3
+import matplotlib.mlab as mlab
 import seaborn as sns
 from sklearn import preprocessing
 from scipy import stats
+import powerlaw
+
+
+
+def plot_index_powerlaw(index):
+    fig = plt.figure(figsize=(10,7))
+    fit = powerlaw.Fit(np.array(index)+1,xmin=1,discrete=True)
+    fit.power_law.plot_pdf( color= 'b',linestyle='--',label='fit ccdf')
+    plt.grid(True)
+    plt.title('Power-Law Fit of Market Index')
+    fit.plot_pdf( color= 'b')
+    plt.savefig("figs/index_powerlaw.svg")
+    plt.show()
+    plt.clf()
 
 
 def represent(traders, stocks, index, duration):
@@ -47,12 +62,13 @@ def represent(traders, stocks, index, duration):
 
 def plot_index(index):
     # plotting market index
+    fig = plt.figure(figsize=(14,5))
     plt.plot(range(1,len(index)),index[1:])
     plt.title('Market Index', fontsize=18)
     plt.xlabel('Time', fontsize=12)
     plt.ylabel('Index', fontsize=12)
     plt.grid(True)
-    #fig.savefig('index.png')
+    plt.savefig("figs/index.svg")
     plt.show()
     plt.clf()
 
@@ -61,8 +77,9 @@ def plot_wealth_distribution(market):
     """ Plotting Trader Wealth Distribution. """
     wealth = market[3:]['total_assets']
 
-    # plot normed histogram
-    plt.hist(wealth, normed=True, bins=range(300, 3000 + 70, 70))
+    # plot normalised histogram
+    fig = plt.figure(figsize=(7,7))
+    plt.hist(wealth, normed=True)
 
     # Computing theoretical distribution, code excerpt from
     # https://elf11.github.io/2017/10/29/python-fitting-data.html
@@ -74,14 +91,16 @@ def plot_wealth_distribution(market):
     plt.plot(lnspc, pdf_beta, label="Beta")
     plt.grid(True)
     plt.title('Trader Wealth Distribution PDF', fontsize=18)
+    plt.savefig("figs/wealth_distribution.svg")
     plt.show()
-
+    plt.clf()
 
 def plot_portfolios(market):
     # plotting trader portfolios
     fig = plt.figure(figsize=(14,14))
-    r = sns.heatmap(market, cmap='BuPu', annot=True, fmt='.0f')
+    r = sns.heatmap(market, cmap='BuPu', annot=False, fmt='.0f')
     r.set_title("Heatmap of Trader Portfolios", fontsize=14)
+    plt.savefig("figs/portfolios.svg")
     plt.show()
     plt.clf()
 
@@ -98,11 +117,9 @@ def plot_wealth_risk(market, traders):
     ts = trader_summary.values
     min_max_scaler = preprocessing.MinMaxScaler()
     ts_scaled = min_max_scaler.fit_transform(ts)
-
     rownames = []
     for o in range(len(traders)):
         rownames.append('trader_' + str(o+1))
-
     df = pd.DataFrame(ts_scaled, index = rownames)
     df = df.sort_values(0)
     df.columns = ['Total Assets', 'Risk Tolerence']
@@ -110,20 +127,48 @@ def plot_wealth_risk(market, traders):
     # plotting normalised trader total_assets next to risk_tolerence
     plot_two(df)
 
+
 def plot_two(df):
-    fig = plt.figure(figsize=(4,14))
+    fig = plt.figure(figsize=(8,14))
     wealth_risk_plot = sns.heatmap(df, cmap='YlGnBu', annot=False, fmt='.1f')
     wealth_risk_plot.set_title("Heatmap of Trader Wealth vs Trader Risk Tolerence", fontsize=12)
+    plt.savefig("figs/wealth_risk_plot.svg")
     plt.show()
     plt.clf()
 
 
 def plot_stocks(stocks):
     # plotting stock value
+    fig = plt.figure(figsize=(14,6))
     for stock in stocks:
         plt.plot(range(0,len(stock.price_trend)),stock.price_trend)
         plt.plot(range(0,len(stock.value_trend)),stock.value_trend)
         plt.title(str('Stock ' + str(stock.id)))
-        plt.legend(['Price','Perceived Value'], loc='upper left')
-        plt.show() #mpld3.show()
-        plt.clf()
+        #plt.legend(['Price','Perceived Value'], loc='upper left')
+    plt.title('Stocks Price Trends', fontsize=18)
+    plt.xlabel('Number of Trades', fontsize=12)
+    plt.ylabel('Price', fontsize=12)
+    plt.savefig("figs/stocks.svg")
+    plt.show() #mpld3.show()
+    plt.clf()
+
+# Print iterations progress, code excerpt from https://stackoverflow.com/questions/3173320/text-progress-bar-in-the-console
+def printProgressBar (iteration, total, prefix = '', suffix = '', decimals = 1, length = 100, fill = '█'):
+    """
+    Call in a loop to create terminal progress bar
+    @params:
+        iteration   - Required  : current iteration (Int)
+        total       - Required  : total iterations (Int)
+        prefix      - Optional  : prefix string (Str)
+        suffix      - Optional  : suffix string (Str)
+        decimals    - Optional  : positive number of decimals in percent complete (Int)
+        length      - Optional  : character length of bar (Int)
+        fill        - Optional  : bar fill character (Str)
+    """
+    percent = ("{0:." + str(decimals) + "f}").format(100 * (iteration / float(total)))
+    filledLength = int(length * iteration // total)
+    bar = fill * filledLength + '-' * (length - filledLength)
+    print('\r%s |%s| %s%% %s' % (prefix, bar, percent, suffix), end = '\r')
+    # Print New Line on Complete
+    if iteration == total:
+        print()

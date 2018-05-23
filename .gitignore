@@ -60,7 +60,9 @@ instance/
 
 # Scrapy stuff:
 .scrapy
-
+Stock_Market_Simulation-Copy1.ipynb
+Stock_Markets_v2.ipynb
+Papers/
 # Sphinx documentation
 docs/_build/
 
