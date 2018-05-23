@@ -10,6 +10,6 @@ The project is a multi-agent based system simulating a single stock market. It w
 
 You can run this simulation in the **Stock Market Simulation.ipynb** iPython notebook:   
 
-*     Download the repo  
-*     Make sure you have [Jupyter Notbook](https://jupyter.org/install) installed
-*     Run the cells in Notebook, and explore the data!
+1. Download the repo  
+2. Make sure you have [Jupyter Notbook](https://jupyter.org/install) installed
+3. Run the cells in Notebook, and explore the data!
