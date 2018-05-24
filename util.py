@@ -2,34 +2,38 @@
     File name: util.py
     Author: Najla Alariefy
     Date created: 8/APR/2018
-    Date last modified: 18/MAY/2018
+    Date last modified: 24/MAY/2018
     Python Version: 3.0
 '''
 
 import random
+import powerlaw
+from sklearn import preprocessing
+from scipy import stats
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt, mpld3
 import matplotlib.mlab as mlab
-import seaborn as sns
-from sklearn import preprocessing
-from scipy import stats
-import powerlaw
+plt.style.use('ggplot')
 
 
-
+# Plots powerlaw on a loglog
 def plot_index_powerlaw(index):
     fig = plt.figure(figsize=(10,7))
     fit = powerlaw.Fit(np.array(index)+1,xmin=1,discrete=True)
     fit.power_law.plot_pdf( color= 'b',linestyle='--',label='fit ccdf')
     plt.grid(True)
-    plt.title('Power-Law Fit of Market Index')
+    plt.title('Power-Law Fit of Market Index', fontsize = 18)
+    plt.ylabel('Frequency')
+    plt.xlabel('Index Magnitude')
     fit.plot_pdf( color= 'b')
-    plt.savefig("figs/index_powerlaw.svg")
+    plt.savefig("figs/index_powerlaw.pdf")
     plt.show()
     plt.clf()
 
 
+
+# Returns traders' portfolios and total wealths as a dataframe
 def represent(traders, stocks, index, duration):
     # displaying traders' portfolios
     colnames = [ 'total_assets', 'wallet']
@@ -60,27 +64,26 @@ def represent(traders, stocks, index, duration):
     return market
 
 
+# plotting market index
 def plot_index(index):
-    # plotting market index
     fig = plt.figure(figsize=(14,5))
     plt.plot(range(1,len(index)),index[1:])
     plt.title('Market Index', fontsize=18)
     plt.xlabel('Time', fontsize=12)
     plt.ylabel('Index', fontsize=12)
     plt.grid(True)
-    plt.savefig("figs/index.svg")
+    plt.savefig("figs/index.pdf")
     plt.show()
     plt.clf()
 
 
-def plot_wealth_distribution(market):
-    """ Plotting Trader Wealth Distribution. """
-    wealth = market[3:]['total_assets']
 
+# Plotting Trader Wealth Distribution.
+def plot_wealth_distribution(market):
+    wealth = market[3:]['total_assets']
     # plot normalised histogram
     fig = plt.figure(figsize=(7,7))
-    plt.hist(wealth, normed=True)
-
+    plt.hist(wealth, normed=True, color='#456dad')
     # Computing theoretical distribution, code excerpt from
     # https://elf11.github.io/2017/10/29/python-fitting-data.html
     xt = plt.xticks()[0]
@@ -90,21 +93,27 @@ def plot_wealth_distribution(market):
     pdf_beta = stats.beta.pdf(lnspc, ab, bb,cb, db)
     plt.plot(lnspc, pdf_beta, label="Beta")
     plt.grid(True)
+    plt.ylabel('Frequency', fontsize = 14)
+    plt.xlabel('Wealth', fontsize = 14)
     plt.title('Trader Wealth Distribution PDF', fontsize=18)
-    plt.savefig("figs/wealth_distribution.svg")
+    plt.savefig("figs/wealth_distribution.pdf")
     plt.show()
     plt.clf()
 
+
+
+# plotting trader portfolios
 def plot_portfolios(market):
-    # plotting trader portfolios
     fig = plt.figure(figsize=(14,14))
     r = sns.heatmap(market, cmap='BuPu', annot=False, fmt='.0f')
     r.set_title("Heatmap of Trader Portfolios", fontsize=14)
-    plt.savefig("figs/portfolios.svg")
+    plt.savefig("figs/portfolios.pdf")
     plt.show()
     plt.clf()
 
 
+
+# plotting normalised trader total_assets next to risk_tolerence
 def plot_wealth_risk(market, traders):
     # displaying trader risk appetites/tolerence
     for trader in traders:
@@ -123,34 +132,36 @@ def plot_wealth_risk(market, traders):
     df = pd.DataFrame(ts_scaled, index = rownames)
     df = df.sort_values(0)
     df.columns = ['Total Assets', 'Risk Tolerence']
-
-    # plotting normalised trader total_assets next to risk_tolerence
-    plot_two(df)
-
-
-def plot_two(df):
     fig = plt.figure(figsize=(8,14))
     wealth_risk_plot = sns.heatmap(df, cmap='YlGnBu', annot=False, fmt='.1f')
     wealth_risk_plot.set_title("Heatmap of Trader Wealth vs Trader Risk Tolerence", fontsize=12)
-    plt.savefig("figs/wealth_risk_plot.svg")
+    plt.savefig("figs/wealth_risk_plot.pdf")
     plt.show()
     plt.clf()
 
 
+
+# plotting stock value trends
 def plot_stocks(stocks):
-    # plotting stock value
+    labels = []
     fig = plt.figure(figsize=(14,6))
+    axes = plt.gca()
+    axes.set_ylim([-10, 1500])
     for stock in stocks:
-        plt.plot(range(0,len(stock.price_trend)),stock.price_trend)
+        #plt.plot(range(0,len(stock.price_trend)),stock.price_trend)
         plt.plot(range(0,len(stock.value_trend)),stock.value_trend)
         plt.title(str('Stock ' + str(stock.id)))
-        #plt.legend(['Price','Perceived Value'], loc='upper left')
+        labels.append(str('Stock ' + str(stock.id + 1)))
+
+    #plt.legend(labels, loc='best')
     plt.title('Stocks Price Trends', fontsize=18)
     plt.xlabel('Number of Trades', fontsize=12)
     plt.ylabel('Price', fontsize=12)
-    plt.savefig("figs/stocks.svg")
+    plt.savefig("figs/stocks.pdf")
     plt.show() #mpld3.show()
     plt.clf()
+
+
 
 # Print iterations progress, code excerpt from https://stackoverflow.com/questions/3173320/text-progress-bar-in-the-console
 def printProgressBar (iteration, total, prefix = '', suffix = '', decimals = 1, length = 100, fill = '█'):

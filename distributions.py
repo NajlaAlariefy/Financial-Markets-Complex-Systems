@@ -117,7 +117,7 @@ def plot_distribution(data, label):
 
     # Update plots
     ax.set_ylim(dataYLim)
-    ax.set_title(u'Avalanche ' + label + '\n All Fitted Distributions')
+    ax.set_title(u'' + label + '\n All Fitted Distributions')
     ax.set_xlabel(label)
     ax.set_ylabel('Frequency')
 
@@ -134,7 +134,7 @@ def plot_distribution(data, label):
     param_str = ', '.join(['{}={:0.2f}'.format(k,v) for k,v in zip(param_names, best_fir_paramms)])
     dist_str = '{}({})'.format(best_fit_name, param_str)
 
-    ax.set_title(u'Avalanche ' + label + ' with best fit distribution \n' + dist_str)
+    ax.set_title(u'' + label + ' with best fit distribution \n' + dist_str)
     ax.set_xlabel(label)
     ax.set_ylabel('Frequency')
 
