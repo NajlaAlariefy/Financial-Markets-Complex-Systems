@@ -13,3 +13,12 @@ You can run this simulation in the **Stock Market Simulation.ipynb** iPython not
 1. Download the repo  
 2. Make sure you have [Jupyter Notbook](https://jupyter.org/install) installed
 3. Run the cells in Notebook, and explore the data!
+
+
+## Files
+
+1. main.py : this file contains the default setting of running the simulation through the CLI, but for explorative analysis the notebook is recommended
+2. stock_market.py : this file contains the main function **run_market** that runs the simulation
+3. stock.py : the Stock class module
+4. trader.py : the Trader class module
+5. util.py : data representation functions (i.e. plots and wrangling)
