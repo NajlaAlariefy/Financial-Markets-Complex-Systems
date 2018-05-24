@@ -22,3 +22,4 @@ You can run this simulation in the **Stock Market Simulation.ipynb** iPython not
 3. stock.py : the Stock class module
 4. trader.py : the Trader class module
 5. util.py : data representation functions (i.e. plots and wrangling)
+6. distributions.py : a function plotting all distributions on a given histogram. [Source](https://stackoverflow.com/a/37616966/2211869)
